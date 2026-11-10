@@ -1,0 +1,54 @@
+Lab Exercise 3 - Exploring the Fetch API
+Guide Question Answers
+
+1. What are the main differences between XMLHttpRequest and Fetch API?
+
+- Syntax: XMLHttpRequest uses an object with event handlers/callbacks
+  (onreadystatechange, onload, onerror) and requires manual setup with open()
+  and send(). Fetch is a single function call, fetch(url, options), that
+  returns a Promise.
+- Response handling: With XHR you read xhr.responseText and call JSON.parse()
+  yourself. With Fetch you call response.json() (or .text(), .blob(), etc.).
+- Error handling: XHR needs checks on readyState and status, plus a separate
+  onerror handler. Fetch only rejects its Promise on network failure; HTTP
+  errors like 404 or 500 do not reject, so we check response.ok ourselves.
+- Chaining: Fetch Promises can be chained with .then() or used with
+  async/await, which avoids deeply nested callbacks.
+- Modern features: Fetch integrates with Request/Response objects, streams,
+  and AbortController. XHR is the older API (from the early 2000s) and is
+  mostly kept for backward compatibility.
+
+
+2. Why is the Fetch API considered more modern and readable?
+
+- It is Promise-based, so the flow reads top to bottom:
+  fetch(...).then(...).then(...).catch(...).
+- It needs far less boilerplate. A simple GET is one line instead of creating
+  an object, setting a state-change handler, calling open(), then send().
+- It avoids "callback hell" and works cleanly with async/await.
+- Options such as method, headers, and body are passed in one clear object.
+- It is a built-in standard in all modern browsers and in Node.js.
+
+
+3. What is the purpose of the .then() and .catch() methods in Fetch?
+
+.then() runs a function when the Promise succeeds. It is used to process the
+result step by step: the first .then() usually checks response.ok and converts
+the response with response.json(); the next .then() receives the parsed data
+and displays it on the page.
+
+.catch() runs a function if something fails anywhere in the chain, such as a
+network problem, or an Error we throw ourselves for a bad HTTP status. It lets
+us show a friendly error message instead of leaving the page broken.
+
+
+4. What happens when you send a POST request to the placeholder API?
+
+JSONPlaceholder is a fake API for testing. When we POST to
+https://jsonplaceholder.typicode.com/posts, the server accepts the data and
+responds with status 201 (Created). The response JSON echoes back the data we
+sent (title, body, userId) plus a new id, which is 101 (the existing posts are
+numbered 1 to 100).
+
+However, the data is NOT really saved. The server only simulates the creation,
+so requesting /posts/101 afterward will not return the new post.
